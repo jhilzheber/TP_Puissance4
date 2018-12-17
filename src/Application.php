@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use Application\Router\Router;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Support\Exception\GameDoesNotExist;
@@ -15,10 +16,13 @@ final class Application
     private $games = [];
     private $selectedGame;
     private $container;
+    private $router;
 
     public function __construct(array $argv, array $config)
     {
         $this->games = $this->initGames($config);
+        $config = require  __DIR__.'/../config/di.global.php';
+        $this->router = $this->container->get(Router::class);
         $this->container = $this->initContainer($config);
         if (count($argv) < 2) {
             throw new \RuntimeException('Please select a game ('.implode(', ', array_keys($this->games)));
@@ -32,6 +36,16 @@ final class Application
         }
         $this->container->setService('participants', $participants);
         $this->selectedGame = $this->container->get($this->games[$argv[1]] ?? array_values($this->games)[0]);
+    }
+    public function dispatch(string $requestUri) : string
+    {
+        $content = ($this->container->get($this->router->resolve($requestUri)))->indexAction();
+        if (is_file(__DIR__.'/Templates/Ring.php')) {
+            ob_start();
+            include __DIR__.'/Templates/Ring.php';
+            return ob_get_clean();
+        }
+        return $content;
     }
     public function run(): string
     {
@@ -67,6 +81,6 @@ final class Application
      */
     public function get($id)
     {
-        // TODO: Implement get() method.
+        return $this->get($id);
     }
 }

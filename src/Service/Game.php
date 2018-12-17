@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Checkers\Entity\Participant;
+use App\Entity\Participant;
 use src\Entity\Player\Player;
 use App\Game as GameInterface;
 use App\DependencyInjection\Exception\TooManyPlayers;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Checkers\Entity;
+namespace App\Entity;
 
 use Support\Entity\Participant as ParticipantInterface;
 
